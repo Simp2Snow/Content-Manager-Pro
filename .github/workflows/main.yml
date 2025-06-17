@@ -1,0 +1,525 @@
+import React, { useState, useEffect } from 'react';
+import { 
+  Share2, 
+  Smartphone, 
+  Tablet, 
+  Monitor, 
+  Upload, 
+  Link, 
+  FileText, 
+  Image, 
+  Video, 
+  Music,
+  Calendar,
+  Settings,
+  Plus,
+  X,
+  Check,
+  Clock,
+  Zap,
+  Brain,
+  Target,
+  Trash2,
+  Edit3,
+  Send,
+  BarChart3,
+  User,
+  Globe,
+  Wifi,
+  WifiOff
+} from 'lucide-react';
+
+const ContentManagerApp = () => {
+  const [activeTab, setActiveTab] = useState('dashboard');
+  const [connectedDevices, setConnectedDevices] = useState([
+    { id: 1, name: 'iPhone 15', type: 'phone', online: true, lastSync: '2 min ago' },
+    { id: 2, name: 'iPad Pro', type: 'tablet', online: true, lastSync: '5 min ago' },
+    { id: 3, name: 'MacBook Pro', type: 'computer', online: true, lastSync: 'Now' },
+    { id: 4, name: 'Work Laptop', type: 'computer', online: false, lastSync: '2 hours ago' }
+  ]);
+  
+  const [sharedContent, setSharedContent] = useState([
+    { id: 1, type: 'link', title: 'React Documentation', url: 'https://react.dev', from: 'MacBook Pro', time: '10 min ago' },
+    { id: 2, type: 'file', title: 'Presentation.pdf', size: '2.4 MB', from: 'Work Laptop', time: '1 hour ago' },
+    { id: 3, type: 'image', title: 'Screenshot_2024.png', size: '1.2 MB', from: 'iPhone 15', time: '3 hours ago' },
+    { id: 4, type: 'text', title: 'Meeting Notes', content: 'Important project updates...', from: 'iPad Pro', time: '5 hours ago' }
+  ]);
+
+  const [socialPosts, setSocialPosts] = useState([]);
+  const [aiLearningMode, setAiLearningMode] = useState(false);
+  const [userProfile, setUserProfile] = useState({
+    interests: [],
+    tone: 'professional',
+    topics: [],
+    approved: 0,
+    total: 0
+  });
+  const [suggestedPosts, setSuggestedPosts] = useState([]);
+  const [scheduledPosts, setScheduledPosts] = useState([]);
+
+  // Simulate AI learning from user preferences
+  useEffect(() => {
+    if (aiLearningMode && userProfile.approved >= 10) {
+      generateSmartSuggestions();
+    }
+  }, [userProfile.approved, aiLearningMode]);
+
+  const generateSmartSuggestions = () => {
+    const suggestions = [
+      {
+        id: Date.now() + 1,
+        content: "Just discovered an amazing productivity hack that's saved me 2 hours daily. Sometimes the simplest solutions are the most powerful! 💡",
+        platforms: ['twitter', 'linkedin'],
+        confidence: 85,
+        reasoning: "Based on your interest in productivity and professional tone"
+      },
+      {
+        id: Date.now() + 2,
+        content: "The intersection of technology and human creativity never ceases to amaze me. Today's innovations are tomorrow's foundations. 🚀",
+        platforms: ['linkedin', 'facebook'],
+        confidence: 78,
+        reasoning: "Matches your tech interests and inspirational posting style"
+      },
+      {
+        id: Date.now() + 3,
+        content: "Quick reminder: Your future self will thank you for the small consistent actions you take today. What's one thing you're doing differently this week?",
+        platforms: ['twitter', 'instagram'],
+        confidence: 92,
+        reasoning: "Aligns with your motivational content preference"
+      }
+    ];
+    setSuggestedPosts(suggestions);
+  };
+
+  const handlePostApproval = (postId, approved) => {
+    setUserProfile(prev => ({
+      ...prev,
+      approved: approved ? prev.approved + 1 : prev.approved,
+      total: prev.total + 1
+    }));
+    
+    setSuggestedPosts(prev => prev.filter(post => post.id !== postId));
+    
+    if (approved) {
+      // Add to scheduled posts
+      const post = suggestedPosts.find(p => p.id === postId);
+      setScheduledPosts(prev => [...prev, {
+        ...post,
+        scheduledFor: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+        status: 'scheduled'
+      }]);
+    }
+  };
+
+  const getDeviceIcon = (type) => {
+    switch(type) {
+      case 'phone': return <Smartphone className="w-5 h-5" />;
+      case 'tablet': return <Tablet className="w-5 h-5" />;
+      case 'computer': return <Monitor className="w-5 h-5" />;
+      default: return <Monitor className="w-5 h-5" />;
+    }
+  };
+
+  const getContentIcon = (type) => {
+    switch(type) {
+      case 'link': return <Link className="w-5 h-5" />;
+      case 'file': return <FileText className="w-5 h-5" />;
+      case 'image': return <Image className="w-5 h-5" />;
+      case 'video': return <Video className="w-5 h-5" />;
+      case 'audio': return <Music className="w-5 h-5" />;
+      case 'text': return <FileText className="w-5 h-5" />;
+      default: return <FileText className="w-5 h-5" />;
+    }
+  };
+
+  const renderDashboard = () => (
+    <div className="space-y-6">
+      {/* Quick Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-blue-600 text-sm font-medium">Connected Devices</p>
+              <p className="text-2xl font-bold text-blue-900">{connectedDevices.filter(d => d.online).length}</p>
+            </div>
+            <Share2 className="w-8 h-8 text-blue-500" />
+          </div>
+        </div>
+        <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-green-600 text-sm font-medium">Shared Today</p>
+              <p className="text-2xl font-bold text-green-900">{sharedContent.length}</p>
+            </div>
+            <Upload className="w-8 h-8 text-green-500" />
+          </div>
+        </div>
+        <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-purple-600 text-sm font-medium">AI Accuracy</p>
+              <p className="text-2xl font-bold text-purple-900">{userProfile.total > 0 ? Math.round((userProfile.approved / userProfile.total) * 100) : 0}%</p>
+            </div>
+            <Brain className="w-8 h-8 text-purple-500" />
+          </div>
+        </div>
+        <div className="bg-orange-50 p-4 rounded-lg border border-orange-200">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-orange-600 text-sm font-medium">Scheduled Posts</p>
+              <p className="text-2xl font-bold text-orange-900">{scheduledPosts.length}</p>
+            </div>
+            <Calendar className="w-8 h-8 text-orange-500" />
+          </div>
+        </div>
+      </div>
+
+      {/* Connected Devices */}
+      <div className="bg-white rounded-lg border border-gray-200 p-6">
+        <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+          <Share2 className="w-5 h-5" />
+          Connected Devices
+        </h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {connectedDevices.map(device => (
+            <div key={device.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+              <div className="flex items-center gap-3">
+                {getDeviceIcon(device.type)}
+                <div>
+                  <p className="font-medium">{device.name}</p>
+                  <p className="text-sm text-gray-500">Last sync: {device.lastSync}</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                {device.online ? (
+                  <Wifi className="w-4 h-4 text-green-500" />
+                ) : (
+                  <WifiOff className="w-4 h-4 text-gray-400" />
+                )}
+                <span className={`text-sm font-medium ${device.online ? 'text-green-600' : 'text-gray-400'}`}>
+                  {device.online ? 'Online' : 'Offline'}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Recent Shared Content */}
+      <div className="bg-white rounded-lg border border-gray-200 p-6">
+        <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+          <FileText className="w-5 h-5" />
+          Recent Shared Content
+        </h3>
+        <div className="space-y-3">
+          {sharedContent.slice(0, 5).map(item => (
+            <div key={item.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+              <div className="flex items-center gap-3">
+                {getContentIcon(item.type)}
+                <div>
+                  <p className="font-medium">{item.title}</p>
+                  <p className="text-sm text-gray-500">From {item.from} • {item.time}</p>
+                </div>
+              </div>
+              <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                Open
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderDevices = () => (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold">Device Management</h2>
+        <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center gap-2">
+          <Plus className="w-4 h-4" />
+          Add Device
+        </button>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {connectedDevices.map(device => (
+          <div key={device.id} className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-lg transition-shadow">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3">
+                {getDeviceIcon(device.type)}
+                <h3 className="font-semibold">{device.name}</h3>
+              </div>
+              <div className={`w-3 h-3 rounded-full ${device.online ? 'bg-green-500' : 'bg-gray-400'}`} />
+            </div>
+            
+            <div className="space-y-2 text-sm text-gray-600">
+              <p>Status: {device.online ? 'Online' : 'Offline'}</p>
+              <p>Last sync: {device.lastSync}</p>
+              <p>Type: {device.type}</p>
+            </div>
+
+            <div className="mt-4 flex gap-2">
+              <button className="flex-1 bg-blue-50 text-blue-600 py-2 px-3 rounded hover:bg-blue-100 text-sm">
+                Sync Now
+              </button>
+              <button className="flex-1 bg-gray-50 text-gray-600 py-2 px-3 rounded hover:bg-gray-100 text-sm">
+                Settings
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
+  const renderSocialAI = () => (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold">AI-Powered Social Media</h2>
+        <div className="flex gap-2">
+          <button 
+            onClick={() => setAiLearningMode(!aiLearningMode)}
+            className={`px-4 py-2 rounded-lg flex items-center gap-2 ${aiLearningMode ? 'bg-purple-600 text-white' : 'bg-gray-200 text-gray-700'}`}
+          >
+            <Brain className="w-4 h-4" />
+            AI Learning {aiLearningMode ? 'ON' : 'OFF'}
+          </button>
+          <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center gap-2">
+            <Plus className="w-4 h-4" />
+            Manual Post
+          </button>
+        </div>
+      </div>
+
+      {/* AI Learning Progress */}
+      {aiLearningMode && (
+        <div className="bg-purple-50 border border-purple-200 rounded-lg p-6">
+          <h3 className="font-semibold text-purple-900 mb-3 flex items-center gap-2">
+            <Target className="w-5 h-5" />
+            AI Learning Progress
+          </h3>
+          <div className="space-y-3">
+            <div className="flex justify-between text-sm">
+              <span>Posts Reviewed</span>
+              <span>{userProfile.total}/100 (targeting 100% approval)</span>
+            </div>
+            <div className="w-full bg-purple-200 rounded-full h-2">
+              <div 
+                className="bg-purple-600 h-2 rounded-full transition-all duration-300"
+                style={{ width: `${Math.min((userProfile.total / 100) * 100, 100)}%` }}
+              />
+            </div>
+            <div className="flex justify-between text-sm">
+              <span>Approval Rate</span>
+              <span className="font-medium">{userProfile.total > 0 ? Math.round((userProfile.approved / userProfile.total) * 100) : 0}%</span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Suggested Posts */}
+      {suggestedPosts.length > 0 && (
+        <div className="bg-white rounded-lg border border-gray-200 p-6">
+          <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+            <Zap className="w-5 h-5" />
+            AI Suggested Posts
+          </h3>
+          <div className="space-y-4">
+            {suggestedPosts.map(post => (
+              <div key={post.id} className="border border-gray-200 rounded-lg p-4">
+                <div className="flex justify-between items-start mb-3">
+                  <div className="flex-1">
+                    <p className="text-gray-800 mb-2">{post.content}</p>
+                    <div className="flex items-center gap-2 text-sm text-gray-500">
+                      <span>Confidence: {post.confidence}%</span>
+                      <span>•</span>
+                      <span>Platforms: {post.platforms.join(', ')}</span>
+                    </div>
+                    <p className="text-xs text-gray-400 mt-1">{post.reasoning}</p>
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <button 
+                    onClick={() => handlePostApproval(post.id, true)}
+                    className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 flex items-center gap-2"
+                  >
+                    <Check className="w-4 h-4" />
+                    Approve & Schedule
+                  </button>
+                  <button 
+                    onClick={() => handlePostApproval(post.id, false)}
+                    className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 flex items-center gap-2"
+                  >
+                    <X className="w-4 h-4" />
+                    Reject
+                  </button>
+                  <button className="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 flex items-center gap-2">
+                    <Edit3 className="w-4 h-4" />
+                    Edit
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Scheduled Posts */}
+      {scheduledPosts.length > 0 && (
+        <div className="bg-white rounded-lg border border-gray-200 p-6">
+          <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+            <Calendar className="w-5 h-5" />
+            Scheduled Posts
+          </h3>
+          <div className="space-y-3">
+            {scheduledPosts.map(post => (
+              <div key={post.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div className="flex-1">
+                  <p className="font-medium text-gray-800 truncate">{post.content.substring(0, 80)}...</p>
+                  <p className="text-sm text-gray-500">
+                    Scheduled for: {new Date(post.scheduledFor).toLocaleDateString()} at {new Date(post.scheduledFor).toLocaleTimeString()}
+                  </p>
+                </div>
+                <div className="flex gap-2">
+                  <button className="text-blue-600 hover:text-blue-800 text-sm">
+                    Edit
+                  </button>
+                  <button className="text-red-600 hover:text-red-800 text-sm">
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Generate Sample Posts Button */}
+      {aiLearningMode && suggestedPosts.length === 0 && (
+        <div className="text-center py-12">
+          <Brain className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+          <h3 className="text-lg font-medium text-gray-700 mb-2">Ready to Generate Smart Suggestions</h3>
+          <p className="text-gray-500 mb-6">AI will analyze your preferences and create personalized post suggestions</p>
+          <button 
+            onClick={generateSmartSuggestions}
+            className="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 flex items-center gap-2 mx-auto"
+          >
+            <Zap className="w-5 h-5" />
+            Generate 10 Sample Posts
+          </button>
+        </div>
+      )}
+    </div>
+  );
+
+  const renderContent = () => (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold">Content Library</h2>
+        <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center gap-2">
+          <Upload className="w-4 h-4" />
+          Upload Content
+        </button>
+      </div>
+
+      <div className="bg-white rounded-lg border border-gray-200 p-6">
+        <div className="space-y-4">
+          {sharedContent.map(item => (
+            <div key={item.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50">
+              <div className="flex items-center gap-4">
+                {getContentIcon(item.type)}
+                <div>
+                  <h3 className="font-medium">{item.title}</h3>
+                  <div className="flex items-center gap-2 text-sm text-gray-500">
+                    <span>From {item.from}</span>
+                    <span>•</span>
+                    <span>{item.time}</span>
+                    {item.size && (
+                      <>
+                        <span>•</span>
+                        <span>{item.size}</span>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <button className="text-blue-600 hover:text-blue-800 text-sm">
+                  Share
+                </button>
+                <button className="text-gray-600 hover:text-gray-800 text-sm">
+                  Download
+                </button>
+                <button className="text-red-600 hover:text-red-800 text-sm">
+                  Delete
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <header className="bg-white border-b border-gray-200 px-6 py-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+              <Share2 className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <h1 className="text-xl font-bold text-gray-900">Content Hub</h1>
+              <p className="text-sm text-gray-500">Seamless cross-platform content management</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-4">
+            <button className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg">
+              <Settings className="w-5 h-5" />
+            </button>
+            <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+              <User className="w-5 h-5 text-white" />
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* Navigation */}
+      <nav className="bg-white border-b border-gray-200 px-6">
+        <div className="flex space-x-8">
+          {[
+            { id: 'dashboard', label: 'Dashboard', icon: BarChart3 },
+            { id: 'devices', label: 'Devices', icon: Share2 },
+            { id: 'content', label: 'Content', icon: FileText },
+            { id: 'social', label: 'Social AI', icon: Brain }
+          ].map(tab => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`flex items-center gap-2 py-4 px-1 border-b-2 font-medium text-sm ${
+                activeTab === tab.id
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              <tab.icon className="w-4 h-4" />
+              {tab.label}
+            </button>
+          ))}
+        </div>
+      </nav>
+
+      {/* Main Content */}
+      <main className="p-6 max-w-7xl mx-auto">
+        {activeTab === 'dashboard' && renderDashboard()}
+        {activeTab === 'devices' && renderDevices()}
+        {activeTab === 'content' && renderContent()}
+        {activeTab === 'social' && renderSocialAI()}
+      </main>
+    </div>
+  );
+};
+
+export default ContentManagerApp;
